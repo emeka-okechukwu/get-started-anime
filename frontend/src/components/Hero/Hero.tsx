@@ -32,15 +32,28 @@ function Hero({ onRecommendationsUpdate }: MovieInputFormProps) {
   const sendInput = async () => {
     setLoading(true)
     try {
-      const response = await axios.post(
-        `${API_BASE_URL}/recommend`,
-        { input: movieTitles } // Sending data as an object
-      )
+      const response = await axios.post(`${API_BASE_URL}/recommend`, {
+        input: movieTitles,
+      })
+
+      if (response.data === 'Not found') {
+        alert(
+          'No recommendations found for your input. Try different movies/shows!'
+        )
+        return
+      }
+
       onRecommendationsUpdate(response.data)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending list:', error)
+      const message =
+        error?.response?.data?.error ||
+        error?.message ||
+        'Something went wrong while fetching recommendations. Please try again.'
+      alert(message)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   const activateInput = (e: BaseSyntheticEvent) => {
@@ -134,7 +147,7 @@ function Hero({ onRecommendationsUpdate }: MovieInputFormProps) {
                     onBlur={inputBlur}
                     type='text'
                     id='hero_create_account'
-                    autoComplete='email'
+                    autoComplete='off'
                     value={movieTitles}
                     onChange={handleInputChange}
                   />

@@ -7,4 +7,10 @@
   display: inline-flex;
   min-width: auto;
   width: auto;
+  transition: border-color 0.2s ease; /* smooth transition */
+}
+
+.inputContainer:focus-within {
+  border-color: white !important; /* white border when input is focused */
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1); /* subtle glow like Netflix */
 }
