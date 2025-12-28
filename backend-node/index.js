@@ -19,6 +19,28 @@ const corsOptions = {
 
 app.use(cors(corsOptions))
 
+// Define allowed genres
+const allowedGenres = [
+  'Action',
+  'Adventure',
+  'Comedy',
+  'Crime',
+  'Documentary',
+  'Drama',
+  'Family',
+  'Fantasy',
+  'History',
+  'Horror',
+  'Music',
+  'Mystery',
+  'Romance',
+  'Science Fiction',
+  'Thriller',
+  'TV Movie',
+  'War',
+  'Western',
+]
+
 app.post('/recommend', async (req, res) => {
   const { input } = req.body
   if (!input) return res.status(400).json({ error: "Missing 'input' field" })
@@ -27,11 +49,13 @@ app.post('/recommend', async (req, res) => {
 
   const genre = await getGenreFromAI(input)
 
-  if (genre === "I'm unable to provide a genre as there") {
+  if (!genre) return res.status(500).json({ error: 'Genre not determined' })
+
+  // Check if genre is in allowed list
+  if (!allowedGenres.includes(genre)) {
+    console.log('Genre not found in allowed list')
     return res.json('Not found')
   }
-
-  if (!genre) return res.status(500).json({ error: 'Genre not determined' })
 
   console.log('Detected genre:', genre)
 
